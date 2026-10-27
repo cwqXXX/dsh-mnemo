@@ -1,77 +1,45 @@
-# 上架清单（P0：缺账号）
+# 上架记录（2026-10-27）
 
-> 包名 `dsh-mnemo` 在 npm 上 **404 = 没人占**。
-> 本地：git 仓库已 init、12 个文件已暂存，**还没 commit**（等你定作者身份）。
+## 已完成
 
-## 一、需要你做的两件事（约 5 分钟）
+| 项 | 状态 |
+|---|---|
+| npm 账号 | ✅ `cwq.xxx`，token 在 `~/.npmrc`（7 天，2026-11-03 过期；2FA 绕过型） |
+| npm 发布 | ✅ **dsh-mnemo@0.2.0** → https://www.npmjs.com/package/dsh-mnemo（latest 已指向 0.2.0） |
+| GitHub 账号 | ✅ `cwqXXX`（cwq147563@163.com） |
+| GitHub 仓库 | ✅ https://github.com/cwqXXX/dsh-mnemo（public，main 分支，13 个文件，topic 已加 `dsh-plugin`） |
+| GitHub token | ✅ 在 `~/.dsh/github-token.txt`（repo scope，30 天） |
 
-### 1. npm 账号
+> 注：`dsh.py push` 走 Steam++ 会卡在 `git-receive-pack`，最后是用 **GitHub REST API**（blobs → tree → commit → ref）建的首个提交。
 
-1. https://www.npmjs.com/signup 注册（邮箱验证）
-2. 右上头像 → **Access Tokens** → **Generate New Token** → 选 **Automation**（跳过 2FA 弹窗）
-3. 复制 `npm_...`
+## 卡住的一项：市场 PR 要等 1 天
 
-### 2. GitHub 账号 + 空仓库
+`contributing.md` 明确要求：**仓库创建满 1 天**才会被 CI 接收。
+仓库创建于 `2026-10-27T06:04:02Z`，**最早 2026-10-28T06:04Z（北京时间 10-28 14:04）** 之后才能提 PR。
 
-1. https://github.com 注册（邮箱验证）
-2. 新建仓库：名字 `dsh-mnemo`，**Public**，**不要**勾 README / .gitignore / license（要空仓库）
-3. Settings → Developer settings → **Personal access tokens (classic)** → Generate new token
-   - 勾 `repo`（够用：建仓库、push、fork、提 PR）
-   - 复制 `ghp_...`
-
-### 3. 把 token 放到文件里（别贴聊天）
-
-```
-C:\Users\XXX\.npmrc                   内容一行：//registry.npmjs.org/:_authToken=npm_xxx
-C:\Users\XXX\.dsh\github-token.txt    内容一行：ghp_xxx
-```
-
-放好回一句「好了」，我读完文件（不回显）后接手：commit → push → publish → 提 PR。
-
-## 二、我接手后会跑的命令
+## 明天要做（已备好脚本）
 
 ```bash
-# 身份 + 提交
-git config user.name  "<GitHub 用户名>"
-git config user.email "<GitHub 邮箱>"
-git commit -m "dsh-mnemo 0.2.0: cross-session memory for DeepSeek Harness"
-git branch -M main
-git remote add origin https://<user>:<token>@github.com/<user>/dsh-mnemo.git
-git -c http.sslVerify=false push -u origin main
-
-# 发 npm（private 已 false）
-node pnpm.mjs publish --access public --no-git-checks
-
-# 提 PR
-# fork awesome-dsh-plugin → 在 README 的 Memory 分类加一行 → PR
+# 条目：work/mnemo-tests/submission-cwqXXX__dsh-mnemo.yml
+# 脚本：work/mnemo-tests/submit-market.mjs（fork → 建分支 → 写 data/plugins/…yml → 开 PR）
+GITHUB_TOKEN=$(cat ~/.dsh/github-token.txt) \
+NODE_TLS_REJECT_UNAUTHORIZED=0 \
+node work/mnemo-tests/submit-market.mjs
 ```
 
-> GitHub 走的是 Steam++，push 要 `-c http.sslVerify=false`，否则证书报错。
+PR 目标：`awesome-dsh-plugin/awesome-dsh-plugin`，文件 `data/plugins/cwqXXX__dsh-mnemo.yml`，分类 `memory`。
+（README 是生成的，**不要**手工改 README。）
 
-## 三、给 awesome-dsh-plugin 的条目
+## 其它要求核对
 
-分类 `memory`（目录 index 里是 `"memory": {"en":"Memory","zh":"记忆"}`）：
+- [x] `package.json` 有 `dsh.bundle.patch`（不是只有 `dsh.client`）
+- [x] 仓库有真实代码（index.js 861 行 + client.js）
+- [x] `dsh-plugin` topic
+- [x] 描述英文以句号结尾、含 `: ` 时加引号（本条目已加单引号）
+- [ ] 仓库满 1 天（明天）
+- [ ] 市场 PR
 
-```markdown
-- [dsh-mnemo](https://github.com/<user>/dsh-mnemo) — 跨会话长期记忆：规则/坑每轮注入，其余按 IDF 证据召回；事实键去重、明文 JSON、设置页可增删改。`dsh plugin --profile web add dsh-mnemo`
-```
+## 注意
 
-标题（PR）：
-`Add dsh-mnemo (memory)`，正文写清：做什么、怎么装、数据存哪、MIT。
-
-## 四、如果不想发公开
-
-市场条目必须有公开 GitHub 仓库，没有就走不了。替代方案：
-
-- 本地 `link:`（现在就是）
-- 或把 `pnpm pack` 出来的 `dsh-mnemo-0.2.0.tgz` 发给别人 `dsh plugin add <tgz 路径>`
-
-## 五、发之前还差什么
-
-- [x] `private: false`、`publishConfig.public`、`engines.dsh >=0.2.0`
-- [x] README / LICENSE / icon / locale
-- [x] `pnpm pack` 验证：9 个文件，含 client.js
-- [x] 工具 schema 回归、33 项自检、14 项接口自检
-- [ ] 页面刷新后目视确认「设置 → 鲸忆」
-- [ ] npm 账号 + token
-- [ ] GitHub 账号 + 空仓库 + token
+- npm token 7 天、GitHub token 30 天，过期后重新生成；`~/.npmrc` 和 `~/.dsh/github-token.txt` 用完可删。
+- `dsh-mnemo` 下有个 `0.0.0-stage` 占位版本（npm staged publishing 的产物），已不影响 `latest`，可以不管。
