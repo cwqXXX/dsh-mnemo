@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Mnemo · Long-term Memory",
+    "description": "Cross-session memory for rules, pitfalls and facts: pinned rules always injected, the rest recalled by evidence, stored as plain JSON."
+  }
+}
