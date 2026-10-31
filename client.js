@@ -124,6 +124,7 @@ window.__ModuleLoader__.load({
       const [busy, setBusy] = useState(false)
       const [query, setQuery] = useState('')
       const [filter, setFilter] = useState('all')
+      const [sort, setSort] = useState('new')
       const [showDeleted, setShowDeleted] = useState(false)
       const [adding, setAdding] = useState(false)
       const [draft, setDraft] = useState({ text: '', kind: 'fact', pinned: false })
@@ -167,10 +168,13 @@ window.__ModuleLoader__.load({
           if (q && !(e.text.toLowerCase().includes(q) || (e.tags || []).join(' ').toLowerCase().includes(q))) return false
           return true
         })
+        const ts = (e) => Date.parse(e.updatedAt || e.createdAt) || 0
         const rank = (e) => (e.pinned ? 0 : 2) + (e.kind === 'rule' || e.kind === 'pitfall' ? 0 : 1)
-        out.sort((a, b) => rank(a) - rank(b) || String(b.updatedAt).localeCompare(String(a.updatedAt)))
+        if (sort === 'old') out.sort((a, b) => ts(a) - ts(b))
+        else if (sort === 'pinned') out.sort((a, b) => rank(a) - rank(b) || ts(b) - ts(a))
+        else out.sort((a, b) => ts(b) - ts(a))
         return out
-      }, [entries, query, filter, showDeleted])
+      }, [entries, query, filter, showDeleted, sort])
 
       function createEntry() {
         const text = draft.text.trim()
@@ -210,6 +214,15 @@ window.__ModuleLoader__.load({
             value: filter,
             onChange: (e) => setFilter(e.target.value),
           }, h('option', { value: 'all' }, '全部类型'), KINDS.map(([k, label]) => h('option', { key: k, value: k }, label))),
+          h('select', {
+            style: S.select,
+            value: sort,
+            onChange: (e) => setSort(e.target.value),
+          },
+            h('option', { value: 'new' }, '最新在前'),
+            h('option', { value: 'old' }, '最早在前'),
+            h('option', { value: 'pinned' }, '钉住优先'),
+          ),
           h('button', {
             style: S.btn,
             onClick: () => setShowDeleted((v) => !v),
