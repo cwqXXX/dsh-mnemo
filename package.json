@@ -1,6 +1,6 @@
 {
   "name": "dsh-mnemo",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "给 DeepSeek Harness 的跨会话长期记忆：规则钉住、按证据召回、事实键去重、明文可读，带管理页。",
   "private": false,
   "publishConfig": {
@@ -18,6 +18,14 @@
     "long-term-memory",
     "agent"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cwqXXX/dsh-mnemo.git"
+  },
+  "homepage": "https://github.com/cwqXXX/dsh-mnemo#readme",
+  "bugs": {
+    "url": "https://github.com/cwqXXX/dsh-mnemo/issues"
+  },
   "exports": {
     ".": "./index.js",
     "./client": "./client.js",
