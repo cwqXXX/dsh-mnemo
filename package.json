@@ -1,6 +1,6 @@
 {
   "name": "dsh-mnemo",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "给 DeepSeek Harness 的跨会话长期记忆：规则钉住、按证据召回、事实键去重、明文可读，带管理页。",
   "private": false,
   "publishConfig": {
